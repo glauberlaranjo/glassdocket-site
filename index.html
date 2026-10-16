@@ -1,0 +1,229 @@
+<title>GlassDocket Overview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: a briefing document. A dark docket-ink hero with the thesis and three findings, then paper sections read top to bottom. */
+:root {
+  --paper: #f5f6f8; --sheet: #ffffff; --ink: #172031; --ink-2: #4a5568; --rule: #d8dde5;
+  --hero: #14233a; --hero-ink: #f2f5f9; --hero-2: #b7c4d6; --hero-rule: #2c4060;
+  --accent: #1f4e79; --accent-ink: #ffffff; --accent-soft: #e5edf6; --gold: #c99a3b;
+  --f-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #10151c; --sheet: #171f29; --ink: #e5eaf1; --ink-2: #a8b2c1; --rule: #2b3543;
+  --hero: #0b1626; --hero-ink: #eef2f7; --hero-2: #a9b8cc; --hero-rule: #22344f;
+  --accent: #8db9e8; --accent-ink: #0f1722; --accent-soft: #1b2a3b; --gold: #e2bd6b; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #10151c; --sheet: #171f29; --ink: #e5eaf1; --ink-2: #a8b2c1; --rule: #2b3543;
+  --hero: #0b1626; --hero-ink: #eef2f7; --hero-2: #a9b8cc; --hero-rule: #22344f;
+  --accent: #8db9e8; --accent-ink: #0f1722; --accent-soft: #1b2a3b; --gold: #e2bd6b; color-scheme: dark; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+.in { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.hero { background: var(--hero); color: var(--hero-ink); }
+.hero .in { padding-block: 28px 44px; display: grid; gap: 22px; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.mark { font-family: var(--f-display); font-weight: 700; font-size: 22px; letter-spacing: -.01em; }
+.mark span { color: var(--gold); }
+.lang { display: inline-flex; border: 1px solid var(--hero-rule); border-radius: 6px; overflow: hidden; }
+.lang button { font: 500 13px var(--f-body); color: var(--hero-2); background: transparent; border: 0; padding: 6px 11px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--hero-ink); color: var(--hero); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.eyebrow { font: 500 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(34px, 6vw, 60px); line-height: 1.04; letter-spacing: -.02em; margin: 0; max-width: 16ch; text-wrap: balance; }
+.sub { font-size: 18px; color: var(--hero-2); max-width: 60ch; margin: 0; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 0; border-top: 1px solid var(--hero-rule); }
+.fact { padding: 18px 18px 4px 0; display: grid; gap: 6px; border-right: 1px solid var(--hero-rule); }
+.fact:last-child { border-right: 0; }
+.fact .v { font-family: var(--f-display); font-weight: 600; font-size: clamp(30px, 4.6vw, 44px); line-height: 1; font-variant-numeric: tabular-nums; }
+.fact .k { font-size: 14px; color: var(--hero-2); max-width: 28ch; }
+@media (max-width: 700px) { .fact { border-right: 0; border-bottom: 1px solid var(--hero-rule); padding-bottom: 16px; } .fact:last-child { border-bottom: 0; } }
+.src { font: 12px var(--f-mono); color: var(--hero-2); }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn { font: 600 15px var(--f-body); background: var(--gold); color: #14233a; border-radius: 6px; padding: 11px 18px; text-decoration: none; display: inline-block; }
+.btn:hover { filter: brightness(1.06); }
+.ghost { font-size: 14px; color: var(--hero-2); }
+main .in { padding-block: 40px 56px; display: grid; gap: 44px; }
+section { display: grid; gap: 16px; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(24px, 3.4vw, 32px); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+.intro { color: var(--ink-2); max-width: 64ch; margin: 0; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.who { font: 600 11.5px var(--f-mono); letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.card h3 { font-size: 16px; font-weight: 600; margin: 0; line-height: 1.35; }
+.card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.tool .state { font: 500 12px var(--f-mono); color: var(--ink-2); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+ul.list { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--ink-2); }
+.never { border-left: 3px solid var(--accent); }
+.basis { background: var(--accent-soft); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 8px; }
+.basis p { margin: 0; }
+footer { border-top: 1px solid var(--rule); }
+footer .in { padding-block: 18px 28px; font-size: 13px; color: var(--ink-2); display: grid; gap: 6px; }
+</style>
+
+<div class="hero">
+  <div class="in">
+    <div class="top">
+      <div class="mark">GlassDocket<span>™</span></div>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">English</button>
+        <button type="button" data-lang="es" aria-pressed="false">Español</button>
+        <button type="button" data-lang="pt" aria-pressed="false">Português</button>
+      </div>
+    </div>
+    <span class="eyebrow" data-t="eyebrow"></span>
+    <h1 data-t="h1"></h1>
+    <p class="sub" data-t="sub"></p>
+    <div class="facts" id="facts"></div>
+    <span class="src" data-t="src"></span>
+    <div class="cta">
+      <a class="btn" href="/pilot/" target="_blank" rel="noopener" data-t="ctaOpen"></a>
+      <span class="ghost" data-t="ctaJoin"></span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="in">
+    <section>
+      <h2 data-t="helpsTitle"></h2>
+      <p class="intro" data-t="helpsIntro"></p>
+      <div class="cards" id="helps"></div>
+    </section>
+
+    <section>
+      <h2 data-t="toolsTitle"></h2>
+      <div class="tools" id="tools"></div>
+    </section>
+
+    <section>
+      <h2 id="how-title"></h2>
+      <p class="intro" id="how-intro"></p>
+      <div class="tools" id="how-list"></div>
+    </section>
+
+    <section class="two">
+      <div class="card"><h3 data-t="askTitle"></h3><p data-t="ask"></p><h3 data-t="getTitle"></h3><p data-t="get"></p></div>
+      <div class="card never"><h3 data-t="neverTitle"></h3><ul class="list" id="never"></ul></div>
+    </section>
+
+    <section class="basis">
+      <h3 data-t="basisTitle"></h3>
+      <p data-t="basis"></p>
+    </section>
+  </div>
+</main>
+
+<footer><div class="in"><span data-t="foot1"></span><span data-t="foot2"></span></div></footer>
+
+<script>
+const T = {
+en: {
+  eyebrow: "Explainable data for asylum practice · Florida and Texas",
+  h1: "Asylum data you can check, line by line",
+  sub: "GlassDocket turns the immigration courts’ public case records into statistics practitioners can verify. Every number shows where it comes from, how certain it is, and which codes behind it remain unclear.",
+  facts: [["21.0% → 3.1%", "Asylum grant rate in Florida and Texas courts, 2014 vs Jan–Aug 2026"], ["22.3%", "Denials in 2026 entered with no individual hearing on the calendar"], ["1 in 4", "“Closed” applications that were changes of venue, not decisions"]],
+  src: "Source: EOIR case data released under FOIA, code-verified analysis by GlassDocket.",
+  ctaOpen: "Open the pilot", ctaJoin: "To join the pilot, reply to the invitation you received.",
+  helpsTitle: "How it helps you",
+  helpsIntro: "Six situations from daily practice, and what GlassDocket does in each.",
+  helps: [
+    ["Immigration attorney", "A new client asks about their chances", "See how similar cases ended in the same court and period, which factors weigh most, and the cases behind the number. The conversation stays realistic and documented."],
+    ["Immigration attorney", "You receive the client’s Notice to Appear", "In seconds, see whether the date, time or place is missing, with the reminder that the objection must be raised before pleadings close. A defect missed at this point does not come back."],
+    ["Immigration attorney", "You plan the case strategy", "See what has changed in your court since 2025, such as the rise in denials without a hearing, to prioritize securing a merits hearing and preserving issues for appeal."],
+    ["Nonprofit with few attorneys", "More requests for help than you can take", "Triage the caseload: which cases have an NTA defect with time running, which are in higher-risk courts or situations, so scarce attorney time goes where it matters most."],
+    ["Nonprofit", "You report to funders", "Use reliable statistics, with source and method, in reports and grant applications."],
+    ["Researcher or law school clinic", "You study the courts", "Work with data verified code by code, without common errors such as counting transfers as decisions."]
+  ],
+  toolsTitle: "What exists today",
+  tools: [["Public dashboard", "Prototype · live", "Grant rates, representation, denials without hearing and court-by-court figures since 2014, in English, Spanish and Portuguese."], ["NTA Checker", "Prototype · live", "Flags missing elements under 8 U.S.C. § 1229(a)(1), with the Pereira, Niz-Chavez, Fernandes and Campos-Chaves cautions."], ["Outcome estimator", "In development", "Explained estimates for a case profile, with the similar historical cases behind them and an uncertainty range."]],
+  askTitle: "What we ask of pilot partners", ask: "About two hours over six to eight weeks: try the tools, tell us what is useful, wrong or missing, and answer a five-minute feedback form.",
+  getTitle: "What partners get", get: "Free access during the pilot, early influence on what the tools do, a findings briefing on your own courts, and a founding-partner discount of 50% for as long as your subscription stays active.",
+  neverTitle: "What GlassDocket will never do",
+  never: ["Show estimates by individual judge", "Score an applicant’s credibility", "Sell to or work with enforcement agencies", "Offer services directly to immigrants", "Use client documents without a signed agreement"],
+  basisTitle: "Research basis",
+  basis: "GlassDocket applies two peer-reviewed articles by Glauber Laranjo, developer of GlassDocket, on explainable AI in courts, forthcoming in November–December 2026: one on explainable triage of judicial precedents, and “Coded Justice,” on transplanting judicial AI to U.S. immigration courts.",
+  how: {"t": "How the outcome estimator is built", "i": "In short: it learns from past court decisions, not from users, and it is tested before anyone sees a number.", "items": [["1 · It learns from public history", "The model is trained on past asylum decisions in EOIR’s public case records for the Florida and Texas immigration courts since 2014. No client data and nothing users type is used to train it."], ["2 · It is tested on cases it never saw", "Before release, it is scored on recent decisions held out from training (March–August 2026). In those tests it ranked a granted case above a denied one about 85% of the time (AUC 0.848), and its probabilities matched observed grant rates closely (average calibration error 0.2 points)."], ["3 · Pilot feedback shapes the tool, not the math", "Partners’ comments decide which factors are shown, how explanations and uncertainty are worded, what the screen needs and which errors to check. Feedback is not used as training data."], ["4 · It is refreshed with each EOIR release", "When EOIR publishes new data, the model is retrained and re-tested on the newest months. An update that performs worse is not released."]]},
+  foot1: "GlassDocket™ · Prototype for a professional pilot. Statistical information, not legal advice.",
+  foot2: "Spanish and Portuguese versions are drafts."
+},
+es: {
+  eyebrow: "Datos explicables para la práctica de asilo · Florida y Texas",
+  h1: "Datos de asilo que se pueden verificar, línea por línea",
+  sub: "GlassDocket convierte los registros públicos de las cortes de inmigración en estadísticas que los profesionales pueden verificar. Cada número muestra de dónde viene, qué tan seguro es y qué códigos siguen sin aclarar.",
+  facts: [["21,0% → 3,1%", "Tasa de concesión de asilo en cortes de Florida y Texas, 2014 vs ene–ago 2026"], ["22,3%", "Denegaciones de 2026 dictadas sin audiencia individual programada"], ["1 de cada 4", "Solicitudes «cerradas» que fueron cambios de sede, no decisiones"]],
+  src: "Fuente: datos de casos de la EOIR publicados por FOIA, análisis de GlassDocket verificado código por código.",
+  ctaOpen: "Abrir el piloto", ctaJoin: "Para participar en el piloto, responda a la invitación que recibió.",
+  helpsTitle: "Cómo le ayuda",
+  helpsIntro: "Seis situaciones de la práctica diaria y lo que GlassDocket hace en cada una.",
+  helps: [
+    ["Abogado de inmigración", "Un cliente nuevo pregunta por sus posibilidades", "Vea cómo terminaron casos similares en la misma corte y período, qué factores pesan más y los casos detrás del número. La conversación es realista y queda documentada."],
+    ["Abogado de inmigración", "Recibe la Notificación de Comparecencia del cliente", "En segundos, vea si falta la fecha, la hora o el lugar, con el recordatorio de que la objeción debe presentarse antes del cierre de los alegatos. Un defecto que se pierde en este punto no vuelve."],
+    ["Abogado de inmigración", "Planifica la estrategia del caso", "Vea qué cambió en su corte desde 2025, como el aumento de denegaciones sin audiencia, para priorizar obtener la audiencia de fondo y preservar argumentos para la apelación."],
+    ["Organización sin fines de lucro con pocos abogados", "Más pedidos de ayuda de los que puede atender", "Clasifique los casos: cuáles tienen un defecto en la NTA con el plazo corriendo, cuáles están en cortes o situaciones de mayor riesgo, para que el tiempo escaso de los abogados vaya donde más importa."],
+    ["Organización sin fines de lucro", "Rinde cuentas a sus financiadores", "Use estadísticas confiables, con fuente y método, en informes y solicitudes de fondos."],
+    ["Investigador o clínica jurídica", "Estudia las cortes", "Trabaje con datos verificados código por código, sin errores comunes como contar traslados como decisiones."]
+  ],
+  toolsTitle: "Lo que ya existe",
+  tools: [["Panel público", "Prototipo · disponible", "Tasas de concesión, representación, denegaciones sin audiencia y cifras por corte desde 2014, en inglés, español y portugués."], ["Verificador de NTA", "Prototipo · disponible", "Señala elementos faltantes según 8 U.S.C. § 1229(a)(1), con las advertencias de Pereira, Niz-Chavez, Fernandes y Campos-Chaves."], ["Estimador de resultados", "En desarrollo", "Estimaciones explicadas para un perfil de caso, con los casos históricos similares y un rango de incertidumbre."]],
+  askTitle: "Lo que pedimos a los socios del piloto", ask: "Unas dos horas en seis a ocho semanas: pruebe las herramientas, díganos qué es útil, incorrecto o falta, y responda un formulario de cinco minutos.",
+  getTitle: "Lo que reciben los socios", get: "Acceso gratuito durante el piloto, influencia temprana en lo que hacen las herramientas, un informe de hallazgos sobre sus propias cortes y un descuento de socio fundador del 50% mientras su suscripción siga activa.",
+  neverTitle: "Lo que GlassDocket nunca hará",
+  never: ["Mostrar estimaciones por juez", "Calificar la credibilidad del solicitante", "Vender o trabajar con agencias de control migratorio", "Ofrecer servicios directamente a inmigrantes", "Usar documentos de clientes sin un acuerdo firmado"],
+  basisTitle: "Base de investigación",
+  basis: "GlassDocket aplica dos artículos revisados por pares de Glauber Laranjo, desarrollador de GlassDocket, sobre IA explicable en tribunales, de próxima publicación en noviembre–diciembre de 2026: uno sobre la clasificación explicable de precedentes judiciales y «Coded Justice», sobre el trasplante de IA judicial a las cortes de inmigración de EE. UU.",
+  how: {"t": "Cómo se construye el estimador de resultados", "i": "En resumen: aprende de decisiones judiciales pasadas, no de los usuarios, y se prueba antes de que alguien vea un número.", "items": [["1 · Aprende del historial público", "El modelo se entrena con decisiones de asilo pasadas de los registros públicos de la EOIR para las cortes de inmigración de Florida y Texas desde 2014. No se usan datos de clientes ni nada de lo que escriben los usuarios para entrenarlo."], ["2 · Se prueba con casos que nunca vio", "Antes de publicarse, se evalúa con decisiones recientes apartadas del entrenamiento (marzo–agosto de 2026). En esas pruebas ordenó un caso concedido por encima de uno negado cerca del 85% de las veces (AUC 0,848), y sus probabilidades coincidieron de cerca con las tasas observadas (error medio de calibración de 0,2 puntos)."], ["3 · La retroalimentación del piloto mejora la herramienta, no el cálculo", "Los comentarios de los socios deciden qué factores se muestran, cómo se redactan las explicaciones y la incertidumbre, qué necesita la pantalla y qué errores revisar. La retroalimentación no se usa como dato de entrenamiento."], ["4 · Se actualiza con cada publicación de la EOIR", "Cuando la EOIR publica datos nuevos, el modelo se reentrena y se vuelve a probar con los meses más recientes. Una actualización con peor desempeño no se publica."]]},
+  foot1: "GlassDocket™ · Prototipo para un piloto profesional. Información estadística, no asesoría legal.",
+  foot2: "Las versiones en español y portugués son borradores."
+},
+pt: {
+  eyebrow: "Dados explicáveis para a prática de asilo · Flórida e Texas",
+  h1: "Dados de asilo que você confere, linha por linha",
+  sub: "O GlassDocket transforma os registros públicos das cortes de imigração em estatísticas que os profissionais podem verificar. Cada número mostra de onde veio, qual o grau de certeza e quais códigos ainda não estão esclarecidos.",
+  facts: [["21,0% → 3,1%", "Taxa de concessão de asilo nas cortes da Flórida e do Texas, 2014 × jan–ago 2026"], ["22,3%", "Negativas de 2026 proferidas sem audiência individual na pauta"], ["1 em 4", "Pedidos “encerrados” que eram mudanças de foro, não decisões"]],
+  src: "Fonte: base de casos da EOIR liberada via FOIA, análise do GlassDocket conferida código a código.",
+  ctaOpen: "Abrir o piloto", ctaJoin: "Para participar do piloto, responda ao convite que você recebeu.",
+  helpsTitle: "Como ajuda você",
+  helpsIntro: "Seis situações da prática diária e o que o GlassDocket faz em cada uma.",
+  helps: [
+    ["Advogado de imigração", "Um cliente novo pergunta sobre as chances", "Veja como terminaram casos parecidos na mesma corte e período, quais fatores pesam e os casos que sustentam o número. A conversa fica realista e documentada."],
+    ["Advogado de imigração", "Você recebe a NTA do cliente", "Em segundos, veja se falta data, hora ou local, com o aviso de que a objeção precisa ser feita antes do encerramento das alegações. Um defeito perdido nesse ponto não volta."],
+    ["Advogado de imigração", "Você prepara a estratégia do caso", "Veja o que mudou na sua corte desde 2025, como o aumento de negativas sem audiência, para priorizar a audiência de mérito e preservar argumentos para recurso."],
+    ["ONG com poucos advogados", "Mais pedidos de ajuda do que consegue atender", "Faça a triagem: quais casos têm defeito de NTA com prazo correndo, quais estão em cortes ou situações de maior risco, para que o tempo escasso dos advogados vá onde faz mais diferença."],
+    ["ONG", "Você presta contas a financiadores", "Use estatísticas confiáveis, com fonte e metodologia, nos relatórios e pedidos de verba."],
+    ["Pesquisador ou clínica jurídica", "Você estuda as cortes", "Trabalhe com dados conferidos código a código, sem erros comuns como contar transferências como decisões."]
+  ],
+  toolsTitle: "O que já existe",
+  tools: [["Painel público", "Protótipo · disponível", "Taxas de concessão, representação, negativas sem audiência e números por corte desde 2014, em inglês, espanhol e português."], ["Verificador de NTA", "Protótipo · disponível", "Aponta elementos faltantes segundo o 8 U.S.C. § 1229(a)(1), com as cautelas de Pereira, Niz-Chavez, Fernandes e Campos-Chaves."], ["Estimador de desfechos", "Em desenvolvimento", "Estimativas explicadas para um perfil de caso, com os casos históricos semelhantes e uma faixa de incerteza."]],
+  askTitle: "O que pedimos aos parceiros do piloto", ask: "Cerca de duas horas ao longo de seis a oito semanas: testar as ferramentas, dizer o que é útil, errado ou falta e responder a um formulário de cinco minutos.",
+  getTitle: "O que os parceiros recebem", get: "Acesso gratuito durante o piloto, influência inicial no que as ferramentas fazem, um relatório de achados sobre as suas cortes e desconto de parceiro fundador de 50% enquanto a assinatura estiver ativa.",
+  neverTitle: "O que o GlassDocket nunca fará",
+  never: ["Mostrar estimativas por juiz", "Pontuar a credibilidade do solicitante", "Vender ou trabalhar com órgãos de fiscalização migratória", "Oferecer serviços diretamente a imigrantes", "Usar documentos de clientes sem termo assinado"],
+  basisTitle: "Base de pesquisa",
+  basis: "O GlassDocket aplica dois artigos revisados por pares de Glauber Laranjo, desenvolvedor do GlassDocket, sobre IA explicável em tribunais, com publicação prevista para novembro e dezembro de 2026: um sobre triagem explicável de precedentes judiciais e o “Coded Justice”, sobre o transplante de IA judicial para as cortes de imigração dos EUA.",
+  how: {"t": "Como o estimador de desfechos é construído", "i": "Em resumo: ele aprende com decisões judiciais passadas, não com os usuários, e é testado antes que alguém veja qualquer número.", "items": [["1 · Aprende com o histórico público", "O modelo é treinado com decisões de asilo passadas dos registros públicos da EOIR para as cortes de imigração da Flórida e do Texas desde 2014. Nenhum dado de cliente nem nada do que os usuários digitam é usado para treiná-lo."], ["2 · É testado com casos que nunca viu", "Antes de ser liberado, é avaliado com decisões recentes separadas do treino (março a agosto de 2026). Nesses testes, colocou um caso concedido acima de um negado em cerca de 85% das vezes (AUC 0,848), e suas probabilidades ficaram muito próximas das taxas observadas (erro médio de calibração de 0,2 ponto)."], ["3 · O feedback do piloto molda a ferramenta, não o cálculo", "Os comentários dos parceiros definem quais fatores aparecem, como explicações e incerteza são redigidas, o que a tela precisa ter e quais erros verificar. O feedback não é usado como dado de treino."], ["4 · É atualizado a cada divulgação da EOIR", "Quando a EOIR publica dados novos, o modelo é retreinado e testado de novo nos meses mais recentes. Uma atualização com desempenho pior não é liberada."]]},
+  foot1: "GlassDocket™ · Protótipo para piloto profissional. Informação estatística, não aconselhamento jurídico.",
+  foot2: "As versões em espanhol e português são rascunhos."
+}};
+let lang = "en";
+try { const s = localStorage.getItem("gd-overview-lang"); if (s && T[s]) lang = s; } catch (e) {}
+const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+function apply() {
+  const D = T[lang];
+  document.documentElement.lang = lang === "pt" ? "pt-BR" : lang === "es" ? "es" : "en-US";
+  document.querySelectorAll("[data-t]").forEach((e) => { const v = D[e.dataset.t]; if (typeof v === "string") e.textContent = v; });
+  document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  const f = document.getElementById("facts"); f.innerHTML = ""; D.facts.forEach(([v, k]) => { const d = mk("div", "fact"); d.append(mk("span", "v", v), mk("span", "k", k)); f.appendChild(d); });
+  const h = document.getElementById("helps"); h.innerHTML = ""; D.helps.forEach(([w, s, t]) => { const c = mk("div", "card"); c.append(mk("span", "who", w), mk("h3", null, s), mk("p", null, t)); h.appendChild(c); });
+  const t = document.getElementById("tools"); t.innerHTML = ""; D.tools.forEach(([n, st, d]) => { const c = mk("div", "card tool"); c.append(mk("h3", null, n), mk("span", "state", st), mk("p", null, d)); t.appendChild(c); });
+  document.getElementById("how-title").textContent = D.how.t;
+  document.getElementById("how-intro").textContent = D.how.i;
+  const hw = document.getElementById("how-list"); hw.innerHTML = ""; D.how.items.forEach(([a, b]) => { const c = mk("div", "card"); c.append(mk("h3", null, a), mk("p", null, b)); hw.appendChild(c); });
+  const n = document.getElementById("never"); n.innerHTML = ""; D.never.forEach((s) => n.appendChild(mk("li", null, s)));
+}
+document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => { lang = b.dataset.lang; try { localStorage.setItem("gd-overview-lang", lang); } catch (e) {} apply(); }));
+apply();
+</script>
