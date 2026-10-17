@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="GlassDocket pilot: explainable asylum statistics, NTA Checker and outcome estimator for immigration practitioners in Florida and Texas.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%231f4e79%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2218%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Georgia%22%3EG%3C/text%3E%3C/svg%3E">
 <title>GlassDocket Pilot</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
@@ -105,6 +111,13 @@ footer { border-top: 1px solid var(--rule); padding-block: 16px 24px; font-size:
 .badge.ok { color: var(--ok); background: var(--ok-bg); } .badge.pend { color: var(--tbd); background: var(--tbd-bg); }
 .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; }
 .how-grid h3 { margin: 0; font-size: 15px; } .how-grid p { margin: 4px 0 0; }
+
+.est-grid { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .est-grid { grid-template-columns: minmax(0, 1fr); } }
+.est-form { gap: 6px; } .est-form select { margin-bottom: 6px; } .est-form select:disabled { opacity: .6; }
+.est-out { display: grid; gap: 16px; min-width: 0; }
+.line .flat { color: var(--ink-2); }
+.cautions[hidden] { display: none; }
 </style>
 
 <header class="bar">
@@ -205,26 +218,30 @@ footer { border-top: 1px solid var(--rule); padding-block: 16px 24px; font-size:
     <h1 data-t="estTitle"></h1>
     <p class="lead" data-t="estLead"></p>
     <div class="banner" data-t="estBanner"></div>
-    <div class="grid2">
-      <div class="card">
-        <h3 data-t="estProfile"></h3>
-        <div class="lines" id="est-profile"></div>
-      </div>
-      <div class="card">
-        <h3 data-t="estResult"></h3>
-        <div class="stat"><span class="v">33.5%</span><span class="k" data-t="estRange"></span></div>
-        <div class="est-bar" aria-hidden="true"><i style="left:16.4%;width:34.7%"></i><b style="left:33.5%"></b></div>
-        <p class="note" data-t="estSimilar"></p>
-      </div>
-      <div class="card">
-        <h3 data-t="estWhy"></h3>
-        <div class="lines" id="est-why"></div>
-        <p class="note" data-t="estWhyNote"></p>
-      </div>
-      <div class="card">
-        <h3 data-t="estWhatIf"></h3>
-        <div class="lines" id="est-whatif"></div>
-        <p class="note" data-t="estWhatIfNote"></p>
+    <div class="est-grid">
+      <form class="card est-form" id="est-form" onsubmit="return false">
+        <h3 data-t="fProfile"></h3>
+        <label for="e-nat" data-t="fNat"></label><select id="e-nat"></select>
+        <label for="e-court" data-t="fCourt"></label><select id="e-court"></select>
+        <label for="e-cust" data-t="fCust"></label><select id="e-cust"></select>
+        <label for="e-rep" data-t="fRep"></label><select id="e-rep"></select>
+        <label for="e-entry" data-t="fEntry"></label><select id="e-entry"></select>
+        <label for="e-filed" data-t="fFiled"></label><select id="e-filed"></select>
+        <label for="e-fam" data-t="fFam"></label><select id="e-fam"></select>
+        <label for="e-chg" data-t="fChg"></label><select id="e-chg"></select>
+        <p class="note" data-t="assume"></p>
+      </form>
+      <div class="est-out" aria-live="polite">
+        <div class="card">
+          <h3 data-t="resTitle"></h3>
+          <div class="stat"><span class="v" id="e-p">–</span><span class="k" id="e-range"></span></div>
+          <div class="est-bar" aria-hidden="true"><i id="e-bar-i"></i><b id="e-bar-b"></b></div>
+          <p class="note" data-t="rangeNote"></p>
+          <div class="cautions" id="e-warn" hidden></div>
+        </div>
+        <div class="card"><h3 data-t="evTitle"></h3><p id="e-ev"></p><p class="note" id="e-ev2"></p><p class="note" data-t="evNote"></p></div>
+        <div class="card"><h3 data-t="whyTitle"></h3><p class="note" id="e-why-lead"></p><div class="lines" id="e-why"></div><p class="note" data-t="whyNote"></p></div>
+        <div class="card"><h3 data-t="wiTitle"></h3><div class="lines" id="e-wi"></div><p class="note" data-t="wiNote"></p><p class="note" id="e-method"></p></div>
       </div>
     </div>
     <div class="card how"><h2 id="how-title"></h2><p class="note" id="how-intro"></p><div class="how-grid" id="how-list"></div></div>
@@ -279,7 +296,7 @@ en: {
   frNoteOk: "No newer EOIR release was available at the last check. EOIR publishes new case data periodically; when it does, every figure here is recalculated.",
   frNotePending: "EOIR has published a newer release. Figures will be recalculated; until then they reflect the release shown.",
   frNoteStale: "The last check was more than 45 days ago, so a newer EOIR release may exist.",
-  how: {"t": "How the outcome estimator is built", "i": "In short: it learns from past court decisions, not from users, and it is tested before anyone sees a number.", "items": [["1 · It learns from public history", "The model is trained on past asylum decisions in EOIR’s public case records for the Florida and Texas immigration courts since 2014. No client data and nothing users type is used to train it."], ["2 · It is tested on cases it never saw", "Before release, it is scored on recent decisions held out from training (March–August 2026). In those tests it ranked a granted case above a denied one about 85% of the time (AUC 0.848), and its probabilities matched observed grant rates closely (average calibration error 0.2 points)."], ["3 · Pilot feedback shapes the tool, not the math", "Partners’ comments decide which factors are shown, how explanations and uncertainty are worded, what the screen needs and which errors to check. Feedback is not used as training data."], ["4 · It is refreshed with each EOIR release", "When EOIR publishes new data, the model is retrained and re-tested on the newest months. An update that performs worse is not released."]]},
+  how: {"t": "How the outcome estimator is built", "i": "In short: it learns from past court decisions, not from users, and it is tested before anyone sees a number.", "items": [["1 · It learns from public history", "The model is trained on past asylum decisions in EOIR’s public case records for the Florida and Texas immigration courts since 2014. No client data and nothing users type is used to train it."], ["2 · It is tested on cases it never saw", "Before release, it is scored on recent decisions held out from training (March–August 2026). In those tests it ranked a granted case above a denied one about 85% of the time (AUC 0.848), and its probabilities matched observed grant rates closely (average calibration error 0.2 points). The version in use was then retrained with the same settings on all decisions through August 2026."], ["3 · Pilot feedback shapes the tool, not the math", "Partners’ comments decide which factors are shown, how explanations and uncertainty are worded, what the screen needs and which errors to check. Feedback is not used as training data."], ["4 · It is refreshed with each EOIR release", "When EOIR publishes new data, the model is retrained and re-tested on the newest months. An update that performs worse is not released."]]},
   homeTitle: "Asylum data you can check, line by line",
   homeLead: "GlassDocket turns EOIR’s public case records into statistics practitioners can verify. Every number shows where it comes from, how certain it is, and which codes behind it remain unclear.",
   protoBanner: "Pilot prototype. Tools run on public EOIR data and fictitious samples only. Do not enter real client information.",
@@ -287,7 +304,7 @@ en: {
   homeTools: "Tools in this pilot",
   toolDash: "Grant rates, representation, denials without hearing and court-by-court figures since 2014.",
   toolNta: "Flags missing elements of a Notice to Appear under 8 U.S.C. § 1229(a)(1), with the key cautions.",
-  toolEst: "Explained estimates for a case profile, with the similar historical cases behind them. In development.",
+  toolEst: "Explained estimates for a case profile, with the similar historical cases behind them and an uncertainty range.",
   homeNever: "What GlassDocket will never do",
   never: ["Show estimates by individual judge", "Score an applicant’s credibility", "Sell to or work with enforcement agencies", "Offer services directly to immigrants", "Use client documents without a signed agreement"],
   dashEyebrow: "Public dashboard · EOIR FOIA data", dashTitle: "Asylum in the Florida and Texas immigration courts",
@@ -323,16 +340,51 @@ en: {
   cautionCampos: "In absentia orders. Under Campos-Chaves v. Garland, 144 S. Ct. 1637 (2024), an in absentia order can stand if a later notice of hearing with the time and place was properly served.",
   cautionNiz: "Single document. Under Niz-Chavez v. Garland, 593 U.S. 155 (2021), the stop-time rule requires one document with all the required information; a later notice does not complete it.",
   samples: { "01_completa": "1 · Complete notice", "02_data_TBD": "2 · Date “TBD”", "05_data_hora_a_definir": "3 · Date and time “to be set”", "06_sem_aviso_advogado": "4 · No right-to-counsel notice", "13_data_hora_em_branco": "5 · Date and time left blank", "12_ilegivel": "6 · Degraded scan (illegible)" },
-  estEyebrow: "Module A · In development", estTitle: "Outcome estimator",
-  estLead: "Describe a case profile and see how similar cases ended, which factors weigh most, and how the estimate changes if a factor changes.",
-  estBanner: "Preview. The interactive version arrives in the next pilot build. Below is a real example from the March–August 2026 test set, anonymized.",
-  estProfile: "Case profile (example)", profile: [["Nationality", "Russia"], ["Court", "Miami (MIA)"], ["Custody", "Never detained"], ["Represented", "Yes"], ["Decision period", "Since Sept. 2025 (current regime)"]],
-  estResult: "Estimated probability of a grant", estRange: "Uncertainty range 16.4% to 51.1%",
-  estSimilar: "Evidence: 52 similar cases decided in the prior 24 months, 22 granted (42.3%; 95% interval 29.9% to 55.8%).",
-  estWhy: "What moved the estimate", why: [["Origin (nationality and language)", "up", "strongly up"], ["Time and legal regime", "down", "strongly down"], ["Application (clock type and family)", "up", "up"], ["Representation", "up", "slightly up"]],
-  estWhyNote: "Grouped explanation (SHAP). The judge is never a factor in user estimates.",
-  estWhatIf: "What if…", whatif: [["Without an attorney", "down", "−9.3 pts"], ["Filed within one year of arrival", "down", "−1.4 pts"]],
-  estWhatIfNote: "Associations in past cases, not causal effects. The actual outcome in this example was a grant.",
+  estEyebrow: "Module A · Pilot version",
+  estTitle: "Outcome estimator",
+  estLead: "Describe a case profile and see the estimated chance of an asylum grant, how similar recent cases ended, which factors weigh most, and how the estimate changes if one factor changes.",
+  estBanner: "Statistical information from past cases, not a prediction for a specific client and not legal advice. The facts, the evidence and the law decide each case. Do not enter names or other client identifiers.",
+  fProfile: "Case profile",
+  fNat: "Nationality",
+  fCourt: "Immigration court",
+  fCust: "Custody status (EOIR)",
+  fRep: "Representation",
+  fEntry: "Date of entry into the U.S.",
+  fFiled: "Asylum application filed within one year of entry?",
+  fFam: "Family members on the case (riders)",
+  fChg: "Charge on the Notice to Appear",
+  optOther: "Other nationalities (grouped)",
+  cust: {"N": "Never detained", "D": "Detained", "R": "Released"},
+  rep: ["No attorney on record", "Attorney entered after the first hearing", "Attorney from the first hearing"],
+  entry: ["Unknown", "Before July 16, 2019", "July 16, 2019 – June 29, 2020", "June 30, 2020 – May 10, 2023", "May 11, 2023 – June 4, 2024", "June 5, 2024 – January 19, 2025", "On or after January 20, 2025"],
+  yesNo: ["Yes", "No"],
+  filedNA: "Not applicable (date of entry unknown)",
+  fam: ["None (principal applicant only)", "1", "2 or more"],
+  chg: ["Without admission or parole — INA 212(a)(6)(A)(i)", "No valid immigrant visa — INA 212(a)(7)(A)(i)(I)", "Both of the above", "Present in violation of the Act — INA 237(a)(1)(B)"],
+  assume: "Assumes a decision under the current legal regime (since September 2, 2025), no criminal grounds, the most common hearing language for the nationality, and the most common application record type in the data (Asy Clock Type “E”, a code EOIR has not defined publicly).",
+  resTitle: "Estimated chance of a grant",
+  rangeTxt: "Model uncertainty range: {lo} to {hi}",
+  rangeNote: "Spread across 20 versions of the model trained on resampled data (5th to 95th percentile). It does not capture facts the model cannot see.",
+  loading: "Loading estimates…",
+  loadErr: "The estimates could not be loaded. Check your connection and reload the page.",
+  evTitle: "Evidence: similar recent cases",
+  evTxt: "{n} decisions under the current legal regime (September 2, 2025 to August 31, 2026) with the same {crit}: {g} granted ({r}; 95% interval {lo} to {hi}).",
+  crit: {"4": "nationality, court, representation and custody", "3": "nationality, court and representation", "2": "nationality and court", "1": "nationality"},
+  evNote: "The estimate adjusts for every factor in the profile; this raw rate does not.",
+  evRelaxed: "Fewer than 30 cases matched every criterion, so the criteria were widened.",
+  evFew: "Fewer than 30 similar cases exist even after widening the criteria. Treat this evidence with caution.",
+  warnSupport: "Only {n} past decisions involve this nationality in this court since 2014. The estimate leans on patterns from other courts.",
+  whyTitle: "What moved the estimate",
+  whyLead: "Compared with an average case in the 2014–2026 data (grant rate {b}). Grouped explanation (SHAP).",
+  groups: {"origin": "Origin (nationality and language)", "court": "Court and circuit", "application": "Application record and family", "oneyear": "One-year filing deadline", "custody": "Custody", "rep": "Representation", "charges": "Charges", "time": "Time and legal regime", "border": "Border rule in force at entry"},
+  str: {"u3": "strongly up", "u2": "up", "u1": "slightly up", "d3": "strongly down", "d2": "down", "d1": "slightly down"},
+  whyNote: "The judge is never a factor. Directions describe associations in past cases, not causes.",
+  wiTitle: "What if…",
+  wi: {"repStart": "With an attorney from the first hearing", "repNone": "Without an attorney", "within": "Filed within one year of entry", "after": "Filed more than one year after entry", "N": "Never detained", "D": "Detained", "R": "Released"},
+  wiFmt: "{d} pts (to {to})",
+  wiNote: "Associations in past cases, not causal effects.",
+  methodTxt: "Validated on {n} decisions from March to August 2026 that it never saw (AUC {auc}; average calibration error {ece} pts). The version in use was then retrained with the same settings on all {nt} decisions through August 2026.",
+  pts: "pts",
   termsEyebrow: "Pilot terms · Draft", termsTitle: "Pilot terms",
   termsLead: "The short version of what participating in the GlassDocket pilot means. A signed version will be provided to each partner.",
   termsBanner: "Draft pending review by a U.S. attorney. Not yet a binding agreement.",
@@ -359,7 +411,7 @@ es: {
   frNoteOk: "En la última verificación no había una publicación más reciente de la EOIR. La EOIR publica datos nuevos periódicamente; cuando lo hace, todas las cifras se recalculan.",
   frNotePending: "La EOIR publicó datos más recientes. Las cifras se recalcularán; mientras tanto reflejan la publicación indicada.",
   frNoteStale: "La última verificación fue hace más de 45 días; puede existir una publicación más reciente de la EOIR.",
-  how: {"t": "Cómo se construye el estimador de resultados", "i": "En resumen: aprende de decisiones judiciales pasadas, no de los usuarios, y se prueba antes de que alguien vea un número.", "items": [["1 · Aprende del historial público", "El modelo se entrena con decisiones de asilo pasadas de los registros públicos de la EOIR para las cortes de inmigración de Florida y Texas desde 2014. No se usan datos de clientes ni nada de lo que escriben los usuarios para entrenarlo."], ["2 · Se prueba con casos que nunca vio", "Antes de publicarse, se evalúa con decisiones recientes apartadas del entrenamiento (marzo–agosto de 2026). En esas pruebas ordenó un caso concedido por encima de uno negado cerca del 85% de las veces (AUC 0,848), y sus probabilidades coincidieron de cerca con las tasas observadas (error medio de calibración de 0,2 puntos)."], ["3 · La retroalimentación del piloto mejora la herramienta, no el cálculo", "Los comentarios de los socios deciden qué factores se muestran, cómo se redactan las explicaciones y la incertidumbre, qué necesita la pantalla y qué errores revisar. La retroalimentación no se usa como dato de entrenamiento."], ["4 · Se actualiza con cada publicación de la EOIR", "Cuando la EOIR publica datos nuevos, el modelo se reentrena y se vuelve a probar con los meses más recientes. Una actualización con peor desempeño no se publica."]]},
+  how: {"t": "Cómo se construye el estimador de resultados", "i": "En resumen: aprende de decisiones judiciales pasadas, no de los usuarios, y se prueba antes de que alguien vea un número.", "items": [["1 · Aprende del historial público", "El modelo se entrena con decisiones de asilo pasadas de los registros públicos de la EOIR para las cortes de inmigración de Florida y Texas desde 2014. No se usan datos de clientes ni nada de lo que escriben los usuarios para entrenarlo."], ["2 · Se prueba con casos que nunca vio", "Antes de publicarse, se evalúa con decisiones recientes apartadas del entrenamiento (marzo–agosto de 2026). En esas pruebas ordenó un caso concedido por encima de uno negado cerca del 85% de las veces (AUC 0,848), y sus probabilidades coincidieron de cerca con las tasas observadas (error medio de calibración de 0,2 puntos). La versión en uso se reentrenó luego con la misma configuración con todas las decisiones hasta agosto de 2026."], ["3 · La retroalimentación del piloto mejora la herramienta, no el cálculo", "Los comentarios de los socios deciden qué factores se muestran, cómo se redactan las explicaciones y la incertidumbre, qué necesita la pantalla y qué errores revisar. La retroalimentación no se usa como dato de entrenamiento."], ["4 · Se actualiza con cada publicación de la EOIR", "Cuando la EOIR publica datos nuevos, el modelo se reentrena y se vuelve a probar con los meses más recientes. Una actualización con peor desempeño no se publica."]]},
   homeTitle: "Datos de asilo que se pueden verificar, línea por línea",
   homeLead: "GlassDocket convierte los registros públicos de la EOIR en estadísticas que los profesionales pueden verificar. Cada número muestra de dónde viene, qué tan seguro es y qué códigos siguen sin aclarar.",
   protoBanner: "Prototipo del piloto. Las herramientas usan solo datos públicos de la EOIR y ejemplos ficticios. No ingrese información real de clientes.",
@@ -367,7 +419,7 @@ es: {
   homeTools: "Herramientas del piloto",
   toolDash: "Tasas de concesión, representación, denegaciones sin audiencia y cifras por corte desde 2014.",
   toolNta: "Señala elementos faltantes de una Notificación de Comparecencia según 8 U.S.C. § 1229(a)(1), con las advertencias clave.",
-  toolEst: "Estimaciones explicadas para un perfil de caso, con los casos históricos similares que las respaldan. En desarrollo.",
+  toolEst: "Estimaciones explicadas para un perfil de caso, con los casos históricos similares que las respaldan y un rango de incertidumbre.",
   homeNever: "Lo que GlassDocket nunca hará",
   never: ["Mostrar estimaciones por juez", "Calificar la credibilidad del solicitante", "Vender o trabajar con agencias de control migratorio", "Ofrecer servicios directamente a inmigrantes", "Usar documentos de clientes sin un acuerdo firmado"],
   dashEyebrow: "Panel público · datos FOIA de la EOIR", dashTitle: "Asilo en las cortes de inmigración de Florida y Texas",
@@ -403,16 +455,51 @@ es: {
   cautionCampos: "Órdenes en ausencia. Según Campos-Chaves v. Garland, 144 S. Ct. 1637 (2024), una orden en ausencia puede mantenerse si después se notificó debidamente un aviso de audiencia con la hora y el lugar.",
   cautionNiz: "Documento único. Según Niz-Chavez v. Garland, 593 U.S. 155 (2021), la regla de interrupción del plazo exige un solo documento con toda la información requerida; un aviso posterior no la completa.",
   samples: { "01_completa": "1 · Notificación completa", "02_data_TBD": "2 · Fecha «TBD»", "05_data_hora_a_definir": "3 · Fecha y hora «por fijar»", "06_sem_aviso_advogado": "4 · Sin aviso de derecho a abogado", "13_data_hora_em_branco": "5 · Fecha y hora en blanco", "12_ilegivel": "6 · Escaneo degradado (ilegible)" },
-  estEyebrow: "Módulo A · En desarrollo", estTitle: "Estimador de resultados",
-  estLead: "Describa un perfil de caso y vea cómo terminaron casos similares, qué factores pesan más y cómo cambia la estimación si cambia un factor.",
-  estBanner: "Vista previa. La versión interactiva llega en la próxima versión del piloto. Abajo, un ejemplo real del conjunto de prueba de marzo a agosto de 2026, anonimizado.",
-  estProfile: "Perfil del caso (ejemplo)", profile: [["Nacionalidad", "Rusia"], ["Corte", "Miami (MIA)"], ["Custodia", "Nunca detenido"], ["Con abogado", "Sí"], ["Período de la decisión", "Desde sept. 2025 (régimen actual)"]],
-  estResult: "Probabilidad estimada de concesión", estRange: "Rango de incertidumbre de 16,4% a 51,1%",
-  estSimilar: "Evidencia: 52 casos similares decididos en los 24 meses anteriores, 22 concedidos (42,3%; intervalo de 95% de 29,9% a 55,8%).",
-  estWhy: "Qué movió la estimación", why: [["Origen (nacionalidad e idioma)", "up", "sube mucho"], ["Tiempo y régimen jurídico", "down", "baja mucho"], ["Solicitud (tipo de reloj y familia)", "up", "sube"], ["Representación", "up", "sube un poco"]],
-  estWhyNote: "Explicación agrupada (SHAP). El juez nunca es un factor en las estimaciones del usuario.",
-  estWhatIf: "¿Y si…?", whatif: [["Sin abogado", "down", "−9,3 pts"], ["Solicitud presentada dentro de un año de la llegada", "down", "−1,4 pts"]],
-  estWhatIfNote: "Asociaciones en casos pasados, no efectos causales. El resultado real de este ejemplo fue una concesión.",
+  estEyebrow: "Módulo A · Versión piloto",
+  estTitle: "Estimador de resultados",
+  estLead: "Describa un perfil de caso y vea la probabilidad estimada de concesión del asilo, cómo terminaron casos recientes similares, qué factores pesan más y cómo cambia la estimación si cambia un factor.",
+  estBanner: "Información estadística de casos pasados, no una predicción para un cliente concreto ni asesoría legal. Los hechos, la prueba y el derecho deciden cada caso. No ingrese nombres ni otros datos que identifiquen al cliente.",
+  fProfile: "Perfil del caso",
+  fNat: "Nacionalidad",
+  fCourt: "Corte de inmigración",
+  fCust: "Situación de custodia (EOIR)",
+  fRep: "Representación",
+  fEntry: "Fecha de entrada a EE. UU.",
+  fFiled: "¿Solicitud de asilo presentada dentro de un año desde la entrada?",
+  fFam: "Familiares en el caso (riders)",
+  fChg: "Cargo en el Notice to Appear",
+  optOther: "Otras nacionalidades (agrupadas)",
+  cust: {"N": "Nunca detenido", "D": "Detenido", "R": "Liberado"},
+  rep: ["Sin abogado registrado", "Abogado ingresó después de la primera audiencia", "Abogado desde la primera audiencia"],
+  entry: ["Desconocida", "Antes del 16 de julio de 2019", "16 de julio de 2019 – 29 de junio de 2020", "30 de junio de 2020 – 10 de mayo de 2023", "11 de mayo de 2023 – 4 de junio de 2024", "5 de junio de 2024 – 19 de enero de 2025", "Desde el 20 de enero de 2025"],
+  yesNo: ["Sí", "No"],
+  filedNA: "No aplica (fecha de entrada desconocida)",
+  fam: ["Ninguno (solo el solicitante principal)", "1", "2 o más"],
+  chg: ["Sin admisión ni parole — INA 212(a)(6)(A)(i)", "Sin visa de inmigrante válida — INA 212(a)(7)(A)(i)(I)", "Ambos", "Presente en violación de la ley — INA 237(a)(1)(B)"],
+  assume: "Supone una decisión bajo el régimen jurídico actual (desde el 2 de septiembre de 2025), sin causales penales, el idioma de audiencia más común para la nacionalidad y el tipo de registro de solicitud más común en los datos (Asy Clock Type “E”, un código que la EOIR no ha definido públicamente).",
+  resTitle: "Probabilidad estimada de concesión",
+  rangeTxt: "Rango de incertidumbre del modelo: {lo} a {hi}",
+  rangeNote: "Variación entre 20 versiones del modelo entrenadas con datos remuestreados (percentiles 5 a 95). No capta hechos que el modelo no ve.",
+  loading: "Cargando estimaciones…",
+  loadErr: "No fue posible cargar las estimaciones. Verifique su conexión y recargue la página.",
+  evTitle: "Evidencia: casos recientes similares",
+  evTxt: "{n} decisiones bajo el régimen jurídico actual (2 de septiembre de 2025 a 31 de agosto de 2026) con la misma {crit}: {g} concedidas ({r}; intervalo de 95% de {lo} a {hi}).",
+  crit: {"4": "nacionalidad, corte, representación y custodia", "3": "nacionalidad, corte y representación", "2": "nacionalidad y corte", "1": "nacionalidad"},
+  evNote: "La estimación ajusta por todos los factores del perfil; esta tasa simple no.",
+  evRelaxed: "Menos de 30 casos coincidían con todos los criterios, por lo que se ampliaron.",
+  evFew: "Hay menos de 30 casos similares incluso tras ampliar los criterios. Use esta evidencia con cautela.",
+  warnSupport: "Solo {n} decisiones pasadas involucran esta nacionalidad en esta corte desde 2014. La estimación se apoya en patrones de otras cortes.",
+  whyTitle: "Qué movió la estimación",
+  whyLead: "Comparado con un caso promedio de los datos 2014–2026 (tasa de concesión {b}). Explicación agrupada (SHAP).",
+  groups: {"origin": "Origen (nacionalidad e idioma)", "court": "Corte y circuito", "application": "Registro de la solicitud y familia", "oneyear": "Plazo de un año", "custody": "Custodia", "rep": "Representación", "charges": "Cargos", "time": "Tiempo y régimen jurídico", "border": "Regla fronteriza vigente a la entrada"},
+  str: {"u3": "sube mucho", "u2": "sube", "u1": "sube un poco", "d3": "baja mucho", "d2": "baja", "d1": "baja un poco"},
+  whyNote: "El juez nunca es un factor. Las direcciones describen asociaciones en casos pasados, no causas.",
+  wiTitle: "Y si…",
+  wi: {"repStart": "Con abogado desde la primera audiencia", "repNone": "Sin abogado", "within": "Presentada dentro de un año desde la entrada", "after": "Presentada más de un año después de la entrada", "N": "Nunca detenido", "D": "Detenido", "R": "Liberado"},
+  wiFmt: "{d} pts (a {to})",
+  wiNote: "Asociaciones en casos pasados, no efectos causales.",
+  methodTxt: "Validado con {n} decisiones de marzo a agosto de 2026 que nunca vio (AUC {auc}; error medio de calibración {ece} pts). La versión en uso se reentrenó luego con la misma configuración con las {nt} decisiones hasta agosto de 2026.",
+  pts: "pts",
   termsEyebrow: "Términos del piloto · Borrador", termsTitle: "Términos del piloto",
   termsLead: "La versión breve de lo que significa participar en el piloto de GlassDocket. Cada socio recibirá una versión para firmar.",
   termsBanner: "Borrador pendiente de revisión por un abogado de EE. UU. Aún no es un acuerdo vinculante. Ante cualquier diferencia, prevalece la versión en inglés.",
@@ -439,7 +526,7 @@ pt: {
   frNoteOk: "Na última verificação não havia divulgação mais recente da EOIR. A EOIR publica dados novos periodicamente; quando isso ocorre, todos os números são recalculados.",
   frNotePending: "A EOIR publicou dados mais recentes. Os números serão recalculados; até lá refletem a divulgação indicada.",
   frNoteStale: "A última verificação ocorreu há mais de 45 dias; pode haver divulgação mais recente da EOIR.",
-  how: {"t": "Como o estimador de desfechos é construído", "i": "Em resumo: ele aprende com decisões judiciais passadas, não com os usuários, e é testado antes que alguém veja qualquer número.", "items": [["1 · Aprende com o histórico público", "O modelo é treinado com decisões de asilo passadas dos registros públicos da EOIR para as cortes de imigração da Flórida e do Texas desde 2014. Nenhum dado de cliente nem nada do que os usuários digitam é usado para treiná-lo."], ["2 · É testado com casos que nunca viu", "Antes de ser liberado, é avaliado com decisões recentes separadas do treino (março a agosto de 2026). Nesses testes, colocou um caso concedido acima de um negado em cerca de 85% das vezes (AUC 0,848), e suas probabilidades ficaram muito próximas das taxas observadas (erro médio de calibração de 0,2 ponto)."], ["3 · O feedback do piloto molda a ferramenta, não o cálculo", "Os comentários dos parceiros definem quais fatores aparecem, como explicações e incerteza são redigidas, o que a tela precisa ter e quais erros verificar. O feedback não é usado como dado de treino."], ["4 · É atualizado a cada divulgação da EOIR", "Quando a EOIR publica dados novos, o modelo é retreinado e testado de novo nos meses mais recentes. Uma atualização com desempenho pior não é liberada."]]},
+  how: {"t": "Como o estimador de desfechos é construído", "i": "Em resumo: ele aprende com decisões judiciais passadas, não com os usuários, e é testado antes que alguém veja qualquer número.", "items": [["1 · Aprende com o histórico público", "O modelo é treinado com decisões de asilo passadas dos registros públicos da EOIR para as cortes de imigração da Flórida e do Texas desde 2014. Nenhum dado de cliente nem nada do que os usuários digitam é usado para treiná-lo."], ["2 · É testado com casos que nunca viu", "Antes de ser liberado, é avaliado com decisões recentes separadas do treino (março a agosto de 2026). Nesses testes, colocou um caso concedido acima de um negado em cerca de 85% das vezes (AUC 0,848), e suas probabilidades ficaram muito próximas das taxas observadas (erro médio de calibração de 0,2 ponto). A versão em uso foi depois retreinada com as mesmas configurações com todas as decisões até agosto de 2026."], ["3 · O feedback do piloto molda a ferramenta, não o cálculo", "Os comentários dos parceiros definem quais fatores aparecem, como explicações e incerteza são redigidas, o que a tela precisa ter e quais erros verificar. O feedback não é usado como dado de treino."], ["4 · É atualizado a cada divulgação da EOIR", "Quando a EOIR publica dados novos, o modelo é retreinado e testado de novo nos meses mais recentes. Uma atualização com desempenho pior não é liberada."]]},
   homeTitle: "Dados de asilo que você confere, linha por linha",
   homeLead: "O GlassDocket transforma os registros públicos da EOIR em estatísticas que os profissionais podem verificar. Cada número mostra de onde veio, qual o grau de certeza e quais códigos ainda não estão esclarecidos.",
   protoBanner: "Protótipo do piloto. As ferramentas usam só dados públicos da EOIR e exemplos fictícios. Não insira informações reais de clientes.",
@@ -447,7 +534,7 @@ pt: {
   homeTools: "Ferramentas do piloto",
   toolDash: "Taxas de concessão, representação, negativas sem audiência e números por corte desde 2014.",
   toolNta: "Aponta elementos faltantes de uma Notice to Appear segundo o 8 U.S.C. § 1229(a)(1), com as cautelas principais.",
-  toolEst: "Estimativas explicadas para um perfil de caso, com os casos históricos semelhantes que as sustentam. Em desenvolvimento.",
+  toolEst: "Estimativas explicadas para um perfil de caso, com os casos históricos semelhantes que as sustentam e uma faixa de incerteza.",
   homeNever: "O que o GlassDocket nunca fará",
   never: ["Mostrar estimativas por juiz", "Pontuar a credibilidade do solicitante", "Vender ou trabalhar com órgãos de fiscalização migratória", "Oferecer serviços diretamente a imigrantes", "Usar documentos de clientes sem termo assinado"],
   dashEyebrow: "Painel público · dados FOIA da EOIR", dashTitle: "Asilo nas cortes de imigração da Flórida e do Texas",
@@ -482,16 +569,51 @@ pt: {
   cautionCampos: "Ordens à revelia. Segundo Campos-Chaves v. Garland, 144 S. Ct. 1637 (2024), a ordem à revelia pode subsistir se depois foi devidamente entregue um aviso de audiência com hora e local.",
   cautionNiz: "Documento único. Segundo Niz-Chavez v. Garland, 593 U.S. 155 (2021), a regra de interrupção do prazo exige um único documento com todas as informações exigidas; um aviso posterior não o completa.",
   samples: { "01_completa": "1 · Notificação completa", "02_data_TBD": "2 · Data “TBD”", "05_data_hora_a_definir": "3 · Data e hora “a definir”", "06_sem_aviso_advogado": "4 · Sem aviso de direito a advogado", "13_data_hora_em_branco": "5 · Data e hora em branco", "12_ilegivel": "6 · Digitalização degradada (ilegível)" },
-  estEyebrow: "Módulo A · Em desenvolvimento", estTitle: "Estimador de desfechos",
-  estLead: "Descreva um perfil de caso e veja como terminaram casos semelhantes, quais fatores mais pesam e como a estimativa muda se um fator mudar.",
-  estBanner: "Prévia. A versão interativa chega na próxima versão do piloto. Abaixo, um exemplo real do conjunto de teste de março a agosto de 2026, anonimizado.",
-  estProfile: "Perfil do caso (exemplo)", profile: [["Nacionalidade", "Rússia"], ["Corte", "Miami (MIA)"], ["Custódia", "Nunca detido"], ["Com advogado", "Sim"], ["Período da decisão", "Desde set. 2025 (regime atual)"]],
-  estResult: "Probabilidade estimada de concessão", estRange: "Faixa de incerteza de 16,4% a 51,1%",
-  estSimilar: "Evidência: 52 casos semelhantes decididos nos 24 meses anteriores, 22 concedidos (42,3%; intervalo de 95% de 29,9% a 55,8%).",
-  estWhy: "O que moveu a estimativa", why: [["Origem (nacionalidade e idioma)", "up", "sobe muito"], ["Tempo e regime jurídico", "down", "desce muito"], ["Pedido (tipo de relógio e família)", "up", "sobe"], ["Representação", "up", "sobe um pouco"]],
-  estWhyNote: "Explicação agrupada (SHAP). O juiz nunca é fator nas estimativas do usuário.",
-  estWhatIf: "E se…", whatif: [["Sem advogado", "down", "−9,3 p.p."], ["Pedido feito em até um ano da chegada", "down", "−1,4 p.p."]],
-  estWhatIfNote: "Associações em casos passados, não efeitos causais. O desfecho real deste exemplo foi concessão.",
+  estEyebrow: "Módulo A · Versão piloto",
+  estTitle: "Estimador de desfechos",
+  estLead: "Descreva um perfil de caso e veja a chance estimada de concessão do asilo, como terminaram casos recentes semelhantes, quais fatores mais pesam e como a estimativa muda se um fator mudar.",
+  estBanner: "Informação estatística de casos passados, não uma previsão para um cliente específico nem orientação jurídica. Os fatos, as provas e o direito decidem cada caso. Não digite nomes nem outros dados que identifiquem o cliente.",
+  fProfile: "Perfil do caso",
+  fNat: "Nacionalidade",
+  fCourt: "Corte de imigração",
+  fCust: "Situação de custódia (EOIR)",
+  fRep: "Representação",
+  fEntry: "Data de entrada nos EUA",
+  fFiled: "Pedido de asilo feito em até um ano da entrada?",
+  fFam: "Familiares no processo (riders)",
+  fChg: "Acusação no Notice to Appear",
+  optOther: "Outras nacionalidades (agrupadas)",
+  cust: {"N": "Nunca detido", "D": "Detido", "R": "Liberado"},
+  rep: ["Sem advogado registrado", "Advogado entrou depois da primeira audiência", "Advogado desde a primeira audiência"],
+  entry: ["Desconhecida", "Antes de 16 de julho de 2019", "16 de julho de 2019 – 29 de junho de 2020", "30 de junho de 2020 – 10 de maio de 2023", "11 de maio de 2023 – 4 de junho de 2024", "5 de junho de 2024 – 19 de janeiro de 2025", "A partir de 20 de janeiro de 2025"],
+  yesNo: ["Sim", "Não"],
+  filedNA: "Não se aplica (data de entrada desconhecida)",
+  fam: ["Nenhum (só o requerente principal)", "1", "2 ou mais"],
+  chg: ["Sem admissão nem parole — INA 212(a)(6)(A)(i)", "Sem visto de imigrante válido — INA 212(a)(7)(A)(i)(I)", "Ambas", "Presente em violação da lei — INA 237(a)(1)(B)"],
+  assume: "Pressupõe decisão no regime jurídico atual (desde 2 de setembro de 2025), sem fundamentos criminais, o idioma de audiência mais comum para a nacionalidade e o tipo de registro de pedido mais comum nos dados (Asy Clock Type “E”, código que a EOIR não definiu publicamente).",
+  resTitle: "Chance estimada de concessão",
+  rangeTxt: "Faixa de incerteza do modelo: {lo} a {hi}",
+  rangeNote: "Variação entre 20 versões do modelo treinadas com dados reamostrados (percentis 5 a 95). Não capta fatos que o modelo não vê.",
+  loading: "Carregando estimativas…",
+  loadErr: "Não foi possível carregar as estimativas. Verifique a conexão e recarregue a página.",
+  evTitle: "Evidência: casos recentes semelhantes",
+  evTxt: "{n} decisões no regime jurídico atual (2 de setembro de 2025 a 31 de agosto de 2026) com a mesma {crit}: {g} concedidas ({r}; intervalo de 95% de {lo} a {hi}).",
+  crit: {"4": "nacionalidade, corte, representação e custódia", "3": "nacionalidade, corte e representação", "2": "nacionalidade e corte", "1": "nacionalidade"},
+  evNote: "A estimativa ajusta por todos os fatores do perfil; esta taxa simples não.",
+  evRelaxed: "Menos de 30 casos atendiam a todos os critérios, por isso os critérios foram ampliados.",
+  evFew: "Há menos de 30 casos semelhantes mesmo após ampliar os critérios. Use esta evidência com cautela.",
+  warnSupport: "Só {n} decisões passadas envolvem esta nacionalidade nesta corte desde 2014. A estimativa se apoia em padrões de outras cortes.",
+  whyTitle: "O que moveu a estimativa",
+  whyLead: "Em comparação com um caso médio dos dados de 2014–2026 (taxa de concessão {b}). Explicação agrupada (SHAP).",
+  groups: {"origin": "Origem (nacionalidade e idioma)", "court": "Corte e circuito", "application": "Registro do pedido e família", "oneyear": "Prazo de um ano", "custody": "Custódia", "rep": "Representação", "charges": "Acusações", "time": "Tempo e regime jurídico", "border": "Regra de fronteira vigente na entrada"},
+  str: {"u3": "sobe muito", "u2": "sobe", "u1": "sobe um pouco", "d3": "desce muito", "d2": "desce", "d1": "desce um pouco"},
+  whyNote: "O juiz nunca é fator. As direções descrevem associações em casos passados, não causas.",
+  wiTitle: "E se…",
+  wi: {"repStart": "Com advogado desde a primeira audiência", "repNone": "Sem advogado", "within": "Pedido em até um ano da entrada", "after": "Pedido mais de um ano após a entrada", "N": "Nunca detido", "D": "Detido", "R": "Liberado"},
+  wiFmt: "{d} p.p. (para {to})",
+  wiNote: "Associações em casos passados, não efeitos causais.",
+  methodTxt: "Validado com {n} decisões de março a agosto de 2026 que nunca viu (AUC {auc}; erro médio de calibração de {ece} p.p.). A versão em uso foi depois retreinada com as mesmas configurações com todas as {nt} decisões até agosto de 2026.",
+  pts: "p.p.",
   termsEyebrow: "Termos do piloto · Rascunho", termsTitle: "Termos do piloto",
   termsLead: "A versão curta do que significa participar do piloto do GlassDocket. Cada parceiro receberá uma versão para assinar.",
   termsBanner: "Rascunho pendente de revisão por advogado americano. Ainda não é um acordo vinculante. Em caso de divergência, prevalece a versão em inglês.",
@@ -545,6 +667,98 @@ function renderHow() {
   const g = document.getElementById("how-list"); g.innerHTML = "";
   H.items.forEach(([t, d]) => { const c = el("div"); c.append(el("h3", null, t), el("p", "note", d)); g.appendChild(c); });
 }
+
+/* ---------- outcome estimator ---------- */
+const NAT_ISO = { HO: "HN", ES: "SV", GT: "GT", VE: "VE", CU: "CU", MX: "MX", NU: "NI", HA: "HT", CO: "CO", CH: "CN", CM: "CM", ER: "ER", EC: "EC", BR: "BR", IN: "IN", RU: "RU", NP: "NP", PE: "PE", BG: "BD", NI: "NG", SO: "SO", TU: "TR", ET: "ET", JM: "JM", EG: "EG", AF: "AF", IR: "IR", DR: "DO", PK: "PK", GV: "GN", VM: "VN", SG: "SN", SY: "SY", MR: "MR", RO: "RO", CF: "CG", DC: "CD", CE: "LK", AO: "AO", GH: "GH" };
+const COURT_INFO = { CIC: ["Conroe", "TX", "806 Hilbig Rd"], DAL: ["Dallas", "TX", "1100 Commerce St."], ELP: ["El Paso", "TX", "700 E. San Antonio Ave."], EPD: ["El Paso", "TX", "8915 Montana Ave."], HGP: ["Houston", "TX", "16800 Greenspoint Park Dr."], HLG: ["Harlingen", "TX", "2009 W. Jefferson Ave."], HOU: ["Houston", "TX", "500 Jefferson St."], HSG: ["Houston", "TX", "8701 S. Gessner Rd."], KRO: ["Miami", "FL", "18201 SW 12th St."], LRO: ["Laredo", "TX", "1406 Jacaman Rd."], MIA: ["Miami", "FL", "333 S. Miami Ave."], ORL: ["Orlando", "FL", "500 N. Orange Ave."], PEP: ["Los Fresnos", "TX", "27991 Buena Vista Blvd."], PSD: ["Pearsall", "TX", "566 Veteran Dr."], SNA: ["San Antonio", "TX", "800 Dolorosa St."] };
+const ENTRY_MAP = [-1, 0, 1, 0, 2, 3, 4];   // date option -> border-rule index (-1 = unknown)
+let META = null, metaErr = false; const NATDATA = {};
+const EST = { nat: "HO", court: "MIA", cust: 0, rep: 2, entry: 6, filed: 0, fam: 0, chg: 0 };
+const fmtPct = (x) => new Intl.NumberFormat(L().locale, { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(x);
+const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+function wilson(k, n, z = 1.96) { if (!n) return [0, 0]; const p = k / n, d = 1 + z * z / n, c = (p + z * z / (2 * n)) / d, h = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d; return [Math.max(0, c - h), Math.min(1, c + h)]; }
+async function loadMeta() {
+  if (META || metaErr) return;
+  try { const r = await fetch("est/meta.json"); if (!r.ok) throw 0; META = await r.json(); } catch (e) { metaErr = true; }
+}
+async function loadNat(n) {
+  if (NATDATA[n]) return NATDATA[n];
+  const r = await fetch("est/n_" + n + ".json"); if (!r.ok) throw 0; const j = await r.json(); NATDATA[n] = j.v; return j.v;
+}
+function entryIndex(entryOpt, filed) { const b = ENTRY_MAP[entryOpt]; return b < 0 ? 0 : 1 + b * 2 + (filed === 0 ? 0 : 1); }
+function rowOf(v, s) {
+  const A = META.axes, ci = A.court.indexOf(s.court), cu = s.cust, en = entryIndex(s.entry, s.filed);
+  const idx = (((((ci * 3 + cu) * 3 + s.rep) * A.entry.length + en) * 3 + s.fam) * 4 + s.chg);
+  const st = META.stride, o = idx * st; return v.slice(o, o + st);
+}
+function buildEstForm() {
+  const D = L(), dn = (() => { try { return new Intl.DisplayNames([D.locale], { type: "region" }); } catch (e) { return null; } })();
+  const opt = (sel, items, cur) => { sel.innerHTML = ""; items.forEach(([v, t]) => { const o = el("option", null, t); o.value = v; sel.appendChild(o); }); sel.value = String(cur); };
+  const natName = (c) => c === "OUTRO" ? D.optOther : (dn && NAT_ISO[c] ? dn.of(NAT_ISO[c]) : c);
+  const nats = META.axes.nat.filter((c) => c !== "OUTRO").map((c) => [c, natName(c)]).sort((a, b) => a[1].localeCompare(b[1], D.locale));
+  if (META.axes.nat.includes("OUTRO")) nats.push(["OUTRO", D.optOther]);
+  opt(document.getElementById("e-nat"), nats, EST.nat);
+  const cs = document.getElementById("e-court"); cs.innerHTML = "";
+  ["FL", "TX"].forEach((stt) => { const g = document.createElement("optgroup"); g.label = stt === "FL" ? "Florida" : "Texas";
+    META.axes.court.filter((c) => (COURT_INFO[c] || [, ""])[1] === stt).sort((a, b) => (COURT_INFO[a][0] + COURT_INFO[a][2]).localeCompare(COURT_INFO[b][0] + COURT_INFO[b][2]))
+      .forEach((c) => { const o = el("option", null, `${COURT_INFO[c][0]} — ${COURT_INFO[c][2]} (${c})`); o.value = c; g.appendChild(o); }); cs.appendChild(g); });
+  cs.value = EST.court;
+  opt(document.getElementById("e-cust"), META.axes.cust.map((c, i) => [i, D.cust[c]]), EST.cust);
+  opt(document.getElementById("e-rep"), D.rep.map((t, i) => [i, t]), EST.rep);
+  opt(document.getElementById("e-entry"), D.entry.map((t, i) => [i, t]), EST.entry);
+  const fs = document.getElementById("e-filed");
+  if (EST.entry === 0) { opt(fs, [[0, D.filedNA]], 0); fs.disabled = true; } else { opt(fs, D.yesNo.map((t, i) => [i, t]), EST.filed); fs.disabled = false; }
+  opt(document.getElementById("e-fam"), D.fam.map((t, i) => [i, t]), EST.fam);
+  opt(document.getElementById("e-chg"), D.chg.map((t, i) => [i, t]), EST.chg);
+}
+async function renderEst() {
+  const D = L(), P = document.getElementById("e-p");
+  await loadMeta();
+  if (!META) { P.textContent = "–"; document.getElementById("e-range").textContent = metaErr ? D.loadErr : D.loading; return; }
+  buildEstForm();
+  let v; try { v = await loadNat(EST.nat); } catch (e) { document.getElementById("e-range").textContent = D.loadErr; return; }
+  const r = rowOf(v, EST), p = r[0] / 1000, lo = r[1] / 1000, hi = r[2] / 1000;
+  P.textContent = fmtPct(p);
+  document.getElementById("e-range").textContent = fill(D.rangeTxt, { lo: fmtPct(lo), hi: fmtPct(hi) });
+  const bi = document.getElementById("e-bar-i"), bb = document.getElementById("e-bar-b");
+  bi.style.left = (100 * lo) + "%"; bi.style.width = Math.max(0.5, 100 * (hi - lo)) + "%"; bb.style.left = `calc(${100 * p}% - 1px)`;
+  // evidence
+  const ta = EST.rep === 0 ? 0 : 1, cust = META.axes.cust[EST.cust];
+  const [k, n, g] = META.similar[`${EST.nat}|${EST.court}|${ta}|${cust}`] || [0, 0, 0];
+  const [wl, wh] = wilson(g, n);
+  document.getElementById("e-ev").textContent = n ? fill(D.evTxt, { n: n.toLocaleString(D.locale), crit: D.crit[String(k)], g: g.toLocaleString(D.locale), r: fmtPct(g / n), lo: fmtPct(wl), hi: fmtPct(wh) }) : D.evFew;
+  document.getElementById("e-ev2").textContent = n < 30 ? D.evFew : (k < 4 ? D.evRelaxed : "");
+  // warnings
+  const sup = META.support[`${EST.nat}|${EST.court}`] || 0, w = document.getElementById("e-warn");
+  if (sup < 30) { w.hidden = false; w.textContent = fill(D.warnSupport, { n: sup.toLocaleString(D.locale) }); } else { w.hidden = true; w.textContent = ""; }
+  // why
+  const b = 1 / (1 + Math.exp(-META.base_logodds));
+  document.getElementById("e-why-lead").textContent = fill(D.whyLead, { b: fmtPct(b) });
+  const why = document.getElementById("e-why"); why.innerHTML = "";
+  META.groups.map((gname, i) => [gname, r[3 + i] / 100]).filter(([, x]) => Math.abs(x) >= 0.1).sort((a, c) => Math.abs(c[1]) - Math.abs(a[1])).slice(0, 5)
+    .forEach(([gname, x]) => { const a = Math.abs(x), lvl = a >= 1 ? 3 : a >= 0.4 ? 2 : 1, up = x > 0;
+      const row = el("div", "line"); row.append(el("span", null, D.groups[gname]), el("span", up ? "up" : "down", (up ? "▲ " : "▼ ") + D.str[(up ? "u" : "d") + lvl])); why.appendChild(row); });
+  // what if
+  const wi = document.getElementById("e-wi"); wi.innerHTML = ""; const alts = [];
+  if (EST.rep !== 2) alts.push(["repStart", { rep: 2 }]);
+  if (EST.rep !== 0) alts.push(["repNone", { rep: 0 }]);
+  if (EST.entry !== 0) alts.push(EST.filed === 0 ? ["after", { filed: 1 }] : ["within", { filed: 0 }]);
+  META.axes.cust.forEach((c, i) => { if (i !== EST.cust) alts.push([c, { cust: i }]); });
+  alts.forEach(([key, ch]) => { const r2 = rowOf(v, { ...EST, ...ch }), q = r2[0] / 1000, d = 100 * (q - p);
+    const sign = d > 0.05 ? "+" : d < -0.05 ? "−" : "±", cls = d > 0.05 ? "up" : d < -0.05 ? "down" : "flat";
+    const num = new Intl.NumberFormat(D.locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Math.abs(d));
+    const row = el("div", "line"); row.append(el("span", null, D.wi[key]), el("span", cls, fill(D.wiFmt, { d: sign + num, to: fmtPct(q) }))); wi.appendChild(row); });
+  const V = META.validated;
+  document.getElementById("e-method").textContent = fill(D.methodTxt, { n: V.n_test.toLocaleString(D.locale), auc: V.auc.toLocaleString(D.locale, { minimumFractionDigits: 3 }), ece: (100 * V.ece).toLocaleString(D.locale, { maximumFractionDigits: 1 }), nt: META.n_train.toLocaleString(D.locale) });
+}
+function bindEst() {
+  const map = { "e-nat": "nat", "e-court": "court", "e-cust": "cust", "e-rep": "rep", "e-entry": "entry", "e-filed": "filed", "e-fam": "fam", "e-chg": "chg" };
+  Object.entries(map).forEach(([id, k]) => document.getElementById(id).addEventListener("change", (ev) => {
+    const val = ev.target.value; EST[k] = (k === "nat" || k === "court") ? val : Number(val);
+    if (k === "entry" && EST.entry !== 0 && document.getElementById("e-filed").disabled) EST.filed = 0;
+    renderEst(); }));
+}
+bindEst();
 /* ---------- static text ---------- */
 function applyLang() {
   const D = L();
@@ -554,12 +768,6 @@ function applyLang() {
   const hs = document.getElementById("home-stats"); hs.innerHTML = "";
   D.stats.forEach(([v, k]) => { const c = el("div", "card stat"); c.append(el("span", "v", v), el("span", "k", k)); hs.appendChild(c); });
   const nv = document.getElementById("never"); nv.innerHTML = ""; D.never.forEach((s) => nv.appendChild(el("li", null, s)));
-  const pr = document.getElementById("est-profile"); pr.innerHTML = "";
-  D.profile.forEach(([k, v]) => { const r = el("div", "line"); r.append(el("span", null, k), el("strong", null, v)); pr.appendChild(r); });
-  const why = document.getElementById("est-why"); why.innerHTML = "";
-  D.why.forEach(([k, dir, v]) => { const r = el("div", "line"); r.append(el("span", null, k), el("span", dir, (dir === "up" ? "▲ " : "▼ ") + v)); why.appendChild(r); });
-  const wi = document.getElementById("est-whatif"); wi.innerHTML = "";
-  D.whatif.forEach(([k, dir, v]) => { const r = el("div", "line"); r.append(el("span", null, k), el("span", dir, v)); wi.appendChild(r); });
   const tl = document.getElementById("terms-list"); tl.innerHTML = "";
   D.terms.forEach(([k, v]) => { tl.append(el("dt", null, k), el("dd", null, v)); });
   const fl = document.getElementById("fb-list"); fl.innerHTML = ""; D.fb.forEach((s) => fl.appendChild(el("li", null, s)));
@@ -571,7 +779,7 @@ function applyLang() {
   const sel = document.getElementById("sample"), cur = sel.value;
   sel.innerHTML = ""; SAMPLES.forEach((s) => { const o = el("option", null, D.samples[s.id]); o.value = s.id; sel.appendChild(o); });
   sel.value = cur || SAMPLES[1].id;
-  renderFresh("fresh-home"); renderFresh("fresh-dash"); renderHow();
+  renderFresh("fresh-home"); renderFresh("fresh-dash"); renderHow(); renderEst();
   renderNTA();
   if (tab === "dashboard") drawDash();
 }
