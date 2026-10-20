@@ -118,7 +118,8 @@ footer { border-top: 1px solid var(--rule); padding-block: 16px 24px; font-size:
 .est-out { display: grid; gap: 16px; min-width: 0; }
 .line .flat { color: var(--ink-2); }
 .cautions[hidden] { display: none; }
-.legal-strip { font-size: 12.5px; line-height: 1.4; color: var(--ink); background: var(--tbd-bg); border-top: 1px solid var(--rule); padding: 6px max(16px, env(safe-area-inset-left, 0px)); text-align: center; }
+.nta-out { border-left: 3px solid var(--accent); padding-left: 10px; }
+.legal-strip { font-size: 14px; line-height: 1.4; color: var(--ink); background: var(--tbd-bg); border-top: 1px solid var(--rule); padding: 6px max(16px, env(safe-area-inset-left, 0px)); text-align: center; }
 .tool.locked { cursor: default; } .tool.locked:hover h3 { color: inherit; } .tool.locked .go { color: var(--ink-2); }
 dialog#lang-dlg { max-width: min(92vw, 520px); border: 1px solid var(--rule); border-radius: 10px; padding: 22px; background: var(--sheet); color: var(--ink); display: none; gap: 12px; }
 dialog#lang-dlg[open] { display: grid; }
@@ -221,6 +222,7 @@ const FRESH = { release: "2026-08", latestDecision: "2026-09-01", built: "2026-0
 
 const T = {
 en: {
+  ntaOutNote: "This check reports structural elements under 8 U.S.C. § 1229(a)(1) for analytical flag purposes only. It does not determine whether a notice is legally invalid.",
   legalStrip: "Statistical and research information for legal professionals. Not legal advice and not a substitute for professional judgment.",
   partnerOnly: "Partners only · access after verification",
   langDlgT: "For legal professionals only",
@@ -341,6 +343,7 @@ en: {
   footer: "GlassDocket™ pilot prototype · public EOIR data · no judge-level outputs. Legal notices are pending review by a U.S. immigration attorney. Spanish and Portuguese translations are drafts."
 },
 es: {
+  ntaOutNote: "Esta verificación señala elementos estructurales según 8 U.S.C. § 1229(a)(1) solo con fines de análisis. No determina si una notificación es jurídicamente inválida.",
   legalStrip: "Información estadística y de investigación para profesionales del derecho. No es asesoría legal ni sustituye el criterio profesional.",
   partnerOnly: "Solo socios · acceso tras verificación",
   langDlgT: "Solo para profesionales del derecho",
@@ -461,6 +464,7 @@ es: {
   footer: "Prototipo del piloto GlassDocket™ · datos públicos de la EOIR · sin resultados por juez. Los avisos legales están pendientes de revisión por un abogado de inmigración de EE. UU. Las traducciones al español y al portugués son borradores."
 },
 pt: {
+  ntaOutNote: "Esta verificação aponta elementos estruturais segundo o 8 U.S.C. § 1229(a)(1) apenas para fins de análise. Não determina se uma notificação é juridicamente inválida.",
   legalStrip: "Informação estatística e de pesquisa para profissionais do direito. Não é orientação jurídica nem substitui o julgamento profissional.",
   partnerOnly: "Só parceiros · acesso após verificação",
   langDlgT: "Somente para profissionais do direito",
